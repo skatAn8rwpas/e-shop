@@ -1,12 +1,30 @@
 <script>
   import { onMount } from "svelte";
+  import {cart} from "./cart/CartStore.js"
+
+  import IconButton from "./components/IconButton.svelte";
+  import Hero from "./components/Hero.svelte";
+  import Card from "./components/Card.svelte";
+  
+  import CartDrawer from "./cart/CartDrawer.svelte";
+  
   let date;
 
   onMount(async () => {
     const res = await fetch("/api/date");
     const newDate = await res.text();
     date = newDate;
+
+    // cart.add({ id: 1, name: "coffe beans", price: 15 })
   });
+
+  function openCartDrawer() {
+    document.body.setAttribute('cart-is-open', '');
+  }
+  
+  function closeCartDrawer() {
+    document.body.removeAttribute('cart-is-open');
+  }
 </script>
 
 <div class="banner">
@@ -25,92 +43,25 @@
       <span>link_3</span>
     </div>
     <div class="col">
-      <button>cart</button>
+      <IconButton on:click={openCartDrawer} icon="shopping_cart" />
     </div>
   </div>
 
 </header>
 
-<asside class="cart drawer">
+<CartDrawer on:close="{closeCartDrawer}"/>
 
-  <button>x</button>
+<main class="content" on:click="{closeCartDrawer}">
+  <Hero />
 
-  <span>Cart is empty</span>
-
-</asside>
-
-<main>
-  <h1>Svelte + Node.js API</h1>
-  <h2>
-    Deployed with
-    <a href="https://vercel.com/docs" target="_blank" rel="noreferrer noopener">
-      Vercel
-    </a>
-    !
-  </h2>
-  <p>
-    <a
-      href="https://github.com/vercel/vercel/tree/master/examples/svelte"
-      target="_blank"
-      rel="noreferrer noopener">
-      This project
-    </a>
-    is a
-    <a href="https://svelte.dev/">Svelte</a>
-    app with three directories,
-    <code>/public</code>
-    for static assets,
-    <code>/src</code>
-    for components and content, and
-    <code>/api</code>
-    which contains a serverless
-    <a href="https://nodejs.org/en/">Node.js</a>
-    function. See
-    <a href="/api/date">
-      <code>api/date</code>
-      for the Date API with Node.js
-    </a>
-    .
-  </p>
+  <section class="products">
+    <h1>Products</h1>
+    <Card />
+  </section>
   <br />
   <h2>The date according to Node.js is:</h2>
   <p>{date ? date : 'Loading date...'}</p>
 
-  <h1>Svelte + Node.js API</h1>
-  <h2>
-    Deployed with
-    <a href="https://vercel.com/docs" target="_blank" rel="noreferrer noopener">
-      Vercel
-    </a>
-    !
-  </h2>
-  <p>
-    <a
-      href="https://github.com/vercel/vercel/tree/master/examples/svelte"
-      target="_blank"
-      rel="noreferrer noopener">
-      This project
-    </a>
-    is a
-    <a href="https://svelte.dev/">Svelte</a>
-    app with three directories,
-    <code>/public</code>
-    for static assets,
-    <code>/src</code>
-    for components and content, and
-    <code>/api</code>
-    which contains a serverless
-    <a href="https://nodejs.org/en/">Node.js</a>
-    function. See
-    <a href="/api/date">
-      <code>api/date</code>
-      for the Date API with Node.js
-    </a>
-    .
-  </p>
-  <br />
-  <h2>The date according to Node.js is:</h2>
-  <p>{date ? date : 'Loading date...'}</p>
 </main>
 
 <style>
@@ -127,27 +78,26 @@
     
     display: flex;
     position: sticky;
-    top: 0;
-    align-items: center;
     background-color: var(--header-bg-color);
+    top: 0;
     height: 64px;
-    border-bottom: var(--header-border);
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0px -1px 0 0 rgb(0 0 0 / 20%);
     backdrop-filter: saturate(180%) blur(5px);
   }
 
   header .raw {
+    position: absolute;
     display: flex;
     flex: 1;
+    align-items: center;
     justify-content: space-between;
-    max-width: 1024px;
+    width: 80%;
+    /* max-width: 1024px; */
     margin: auto;
   }
   header .raw .col:nth-child(2) { color: rgba(0,0,0, 0.4); }
   header .raw .col span:hover { color: rgba(0,0,0, 0.8); }
 
-
-  .drawer {
-    width: 360px;
-    background: #0f0f0f;
-  }
 </style>
